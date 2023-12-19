@@ -15,7 +15,7 @@
         android:background="@color/white">
 
         <EditText
-            android:id="@+id/reminderTitle"
+            android:id="@+id/etReminderTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/reminder_title"
@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/reminderDescription"
+            android:id="@+id/etReminderDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start"
@@ -34,10 +34,10 @@
             android:text="@={viewModel.reminderDescription}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reminderTitle" />
+            app:layout_constraintTop_toBottomOf="@id/etReminderTitle" />
 
         <TextView
-            android:id="@+id/selectLocation"
+            android:id="@+id/tvSelectLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
@@ -49,23 +49,22 @@
             android:text="@string/reminder_location"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reminderDescription" />
+            app:layout_constraintTop_toBottomOf="@id/etReminderDescription" />
 
         <TextView
-            android:id="@+id/selectedLocation"
+            android:id="@+id/tvSelectedLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_normal"
             android:text="@{viewModel.reminderSelectedLocationStr}"
             android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="@id/selectLocation"
+            app:layout_constraintBottom_toBottomOf="@id/tvSelectLocation"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/selectLocation"
+            app:layout_constraintTop_toTopOf="@id/tvSelectLocation"
             tools:text="Location" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/saveReminder"
+            android:id="@+id/btnSaveReminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_normal"
@@ -77,7 +76,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/pbProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
