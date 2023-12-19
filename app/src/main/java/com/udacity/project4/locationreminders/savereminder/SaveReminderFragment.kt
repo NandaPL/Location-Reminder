@@ -16,30 +16,30 @@ class SaveReminderFragment : BaseFragment() {
 
     // Get the view model this time as a single to be shared with the another fragment
     override val _viewModel: SaveReminderViewModel by inject()
-    private lateinit var binding: FragmentSaveReminderBinding
+    private lateinit var dataBinding: FragmentSaveReminderBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val layoutId = R.layout.fragment_save_reminder
-        binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
+        dataBinding = DataBindingUtil.inflate(inflater, layoutId, container, false)
 
         setDisplayHomeAsUpEnabled(true)
-        binding.viewModel = _viewModel
-        return binding.root
+        dataBinding.viewModel = _viewModel
+        return dataBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.lifecycleOwner = this
-        binding.selectLocation.setOnClickListener {
+        dataBinding.lifecycleOwner = this
+        dataBinding.tvSelectLocation.setOnClickListener {
             // Navigate to another fragment to get the user location
             val directions = SaveReminderFragmentDirections
                 .actionSaveReminderFragmentToSelectLocationFragment()
             _viewModel.navigationCommand.value = NavigationCommand.To(directions)
         }
 
-        binding.saveReminder.setOnClickListener {
+        dataBinding.btnSaveReminder.setOnClickListener {
             val title = _viewModel.reminderTitle.value
             val description = _viewModel.reminderDescription
             val location = _viewModel.reminderSelectedLocationStr.value
