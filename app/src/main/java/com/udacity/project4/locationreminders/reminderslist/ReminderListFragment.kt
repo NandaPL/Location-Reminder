@@ -1,9 +1,13 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
+import com.firebase.ui.auth.AuthUI
 import com.udacity.project4.R
+import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
@@ -16,29 +20,30 @@ class ReminderListFragment : BaseFragment() {
 
     // Use Koin to retrieve the ViewModel instance
     override val _viewModel: RemindersListViewModel by viewModel()
-    private lateinit var binding: FragmentRemindersBinding
+    private lateinit var dataBinding: FragmentRemindersBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater,
+        dataBinding = DataBindingUtil.inflate(inflater,
             R.layout.fragment_reminders, container, false
         )
-        binding.viewModel = _viewModel
+        dataBinding.viewModel = _viewModel
 
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(false)
         setTitle(getString(R.string.app_name))
-        binding.refreshLayout.setOnRefreshListener { _viewModel.loadReminders() }
-        return binding.root
+
+        dataBinding.refreshLayout.setOnRefreshListener { _viewModel.loadReminders() }
+        return dataBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.lifecycleOwner = this
+        dataBinding.lifecycleOwner = this
         setupRecyclerView()
-        binding.addReminderFAB.setOnClickListener {
+        dataBinding.addReminderFAB.setOnClickListener {
             navigateToAddReminder()
         }
     }
@@ -59,13 +64,19 @@ class ReminderListFragment : BaseFragment() {
     private fun setupRecyclerView() {
         val adapter = RemindersListAdapter {}
         // Setup the recycler view using the extension function
-        binding.reminderssRecyclerView.setup(adapter)
+        dataBinding.reminderssRecyclerView.setup(adapter)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-                // TODO: add the logout implementation
+                AuthUI.getInstance().signOut(requireContext())
+                    .addOnCompleteListener {
+                        Intent(requireActivity(), AuthenticationActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            startActivity(this)
+                        }
+                    }
             }
         }
         return super.onOptionsItemSelected(item)
