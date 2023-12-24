@@ -35,7 +35,9 @@ class ReminderListFragment : BaseFragment() {
         setDisplayHomeAsUpEnabled(false)
         setTitle(getString(R.string.app_name))
 
-        dataBinding.refreshLayout.setOnRefreshListener { _viewModel.loadReminders() }
+        dataBinding.refreshLayout.setOnRefreshListener {
+            _viewModel.loadReminders()
+        }
         return dataBinding.root
     }
 

@@ -45,4 +45,13 @@
     <string name="home">Home</string>
     <string name="description">Description:</string>
     <string name="lorem_ipsum_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nec sapien massa. Maecenas scelerisque euismod ultricies. Aliquam sollicitudin sapien vitae sem posuere, a ornare odio suscipit. Donec sit amet massa at risus sagittis scelerisque. Integer vehicula pellentesque urna, ac interdum sem dictum ornare. Phasellus vel enim ipsum. Donec commodo, neque non tempor dictum, lacus massa gravida nunc, at finibus justo sapien et eros. Etiam semper pulvinar augue et suscipit. Ut lectus purus, ultrices quis purus sed, gravida porta tellus. Duis finibus augue ac neque flavoring sodales.</string>
+    <string name="add_pin">Add pin</string>
+    <string name="personalized_localization">Personalized localization</string>
+    <string name="denied">Denied</string>
+    <string name="location_permission_was_not_granted">Location permission was not granted.</string>
+    <string name="permission">Permission</string>
+    <string name="save_reminder_error_explanation">Select the location and add the title and description before saving.</string>
+    <string name="error_getting_location_settings">Error getting location settings resolution: </string>
+    <string name="geofence_add">Successfully added geofence!</string>
+    <string name="exception_occurred">An exception occurred: %1$s</string>
 </resources>
