@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.fragment.findNavController
 import com.firebase.ui.auth.AuthUI
 import com.udacity.project4.R
 import com.udacity.project4.authentication.AuthenticationActivity
@@ -19,7 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ReminderListFragment : BaseFragment() {
 
     // Use Koin to retrieve the ViewModel instance
-    override val _viewModel: RemindersListViewModel by viewModel()
+    override val mViewModel: RemindersListViewModel by viewModel()
     private lateinit var dataBinding: FragmentRemindersBinding
 
     override fun onCreateView(
@@ -29,14 +28,14 @@ class ReminderListFragment : BaseFragment() {
         dataBinding = DataBindingUtil.inflate(inflater,
             R.layout.fragment_reminders, container, false
         )
-        dataBinding.viewModel = _viewModel
+        dataBinding.viewModel = mViewModel
 
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(false)
         setTitle(getString(R.string.app_name))
 
         dataBinding.refreshLayout.setOnRefreshListener {
-            _viewModel.loadReminders()
+            mViewModel.loadReminders()
         }
         return dataBinding.root
     }
@@ -53,12 +52,12 @@ class ReminderListFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         // Load the reminders list on the ui
-        _viewModel.loadReminders()
+        mViewModel.loadReminders()
     }
 
     private fun navigateToAddReminder() {
         // Use the navigationCommand live data to navigate between the fragments
-        _viewModel.navigationCommand.postValue(
+        mViewModel.navigationCommand.postValue(
             NavigationCommand.To(ReminderListFragmentDirections.toSaveReminder())
         )
     }

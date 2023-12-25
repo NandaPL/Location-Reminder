@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.location.Location
-import android.location.LocationManager
 import android.os.Build
 import com.google.android.gms.location.*
 import android.os.Bundle
@@ -39,7 +38,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private val TAG = SelectLocationFragment::class.java.simpleName
 
     // Use Koin to get the view model of the SaveReminder
-    override val _viewModel: SaveReminderViewModel by inject()
+    override val mViewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSelectLocationBinding
 
     private lateinit var map: GoogleMap
@@ -55,7 +54,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         val layoutId = R.layout.fragment_select_location
         binding = DataBindingUtil.inflate(inflater, layoutId, container, false)
 
-        binding.viewModel = _viewModel
+        binding.viewModel = mViewModel
         binding.lifecycleOwner = this
 
         val mapFragment = childFragmentManager
@@ -88,7 +87,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 }
             )
 
-            _viewModel.setLocationSelectedInfo(it, getString(R.string.personalized_localization))
+            mViewModel.setLocationSelectedInfo(it, getString(R.string.personalized_localization))
         }
     }
 
@@ -102,7 +101,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 }
             )
             poiMarker?.showInfoWindow()
-            _viewModel.setLocationSelectedInfo(it.latLng, it.name)
+            mViewModel.setLocationSelectedInfo(it.latLng, it.name)
         }
     }
 

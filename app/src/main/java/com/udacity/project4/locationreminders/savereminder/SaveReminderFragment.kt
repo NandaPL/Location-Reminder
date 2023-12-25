@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -44,7 +45,7 @@ class SaveReminderFragment : BaseFragment() {
     private val TAG = SaveReminderFragment::class.java.simpleName
 
     // Get the view model this time as a single to be shared with the another fragment
-    override val _viewModel: SaveReminderViewModel by inject()
+    override val mViewModel: SaveReminderViewModel by inject()
     private lateinit var dataBinding: FragmentSaveReminderBinding
     private lateinit var geofencingClient: GeofencingClient
     private val geofencePendingIntent: PendingIntent by lazy {
@@ -55,9 +56,10 @@ class SaveReminderFragment : BaseFragment() {
             requireActivity().applicationContext,
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_MUTABLE
         )
     }
+    private lateinit var mContext: Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -66,7 +68,7 @@ class SaveReminderFragment : BaseFragment() {
         dataBinding = DataBindingUtil.inflate(inflater, layoutId, container, false)
 
         setDisplayHomeAsUpEnabled(true)
-        dataBinding.viewModel = _viewModel
+        dataBinding.viewModel = mViewModel
 
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
 
@@ -81,12 +83,12 @@ class SaveReminderFragment : BaseFragment() {
             // Navigate to another fragment to get the user location
             val directions = SaveReminderFragmentDirections
                 .actionSaveReminderFragmentToSelectLocationFragment()
-            _viewModel.navigationCommand.value = NavigationCommand.To(directions)
+            mViewModel.navigationCommand.value = NavigationCommand.To(directions)
         }
 
         dataBinding.btnSaveReminder.setOnClickListener {
-            if (_viewModel.reminderTitle.value == null || _viewModel.reminderDescription.value == null
-                || _viewModel.latitude.value == null || _viewModel.longitude.value == null) {
+            if (mViewModel.reminderTitle.value == null || mViewModel.reminderDescription.value == null
+                || mViewModel.latitude.value == null || mViewModel.longitude.value == null) {
                 Snackbar.make(
                     dataBinding.root,
                     getString(R.string.save_reminder_error_explanation),
@@ -96,6 +98,11 @@ class SaveReminderFragment : BaseFragment() {
                 checkPermissionsAndStartGeofencing()
             }
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -113,7 +120,7 @@ class SaveReminderFragment : BaseFragment() {
                 else -> {
                     Log.i("Permission: ", getString(R.string.denied))
                     Toast.makeText(
-                        requireContext(),
+                        mContext,
                         getString(R.string.location_permission_was_not_granted),
                         Toast.LENGTH_LONG
                     ).show()
@@ -175,10 +182,10 @@ class SaveReminderFragment : BaseFragment() {
         locationSettingsResponseTask?.addOnCompleteListener {
             if (it.isSuccessful) {
                 val reminderDataItem =
-                    ReminderDataItem(_viewModel.reminderTitle.value,
-                        _viewModel.reminderDescription.value, _viewModel.reminderSelectedLocationStr.value,
-                        _viewModel.latitude.value, _viewModel.longitude.value)
-                _viewModel.saveReminder(reminderDataItem)
+                    ReminderDataItem(mViewModel.reminderTitle.value,
+                        mViewModel.reminderDescription.value, mViewModel.reminderSelectedLocationStr.value,
+                        mViewModel.latitude.value, mViewModel.longitude.value)
+                mViewModel.saveReminder(reminderDataItem)
                 addGeofence(reminderDataItem.id)
             }
         }
@@ -187,7 +194,7 @@ class SaveReminderFragment : BaseFragment() {
     private fun foregroundAndBackgroundLocationPermissionApproved(): Boolean {
         val foregroundLocationApproved = (
                 PackageManager.PERMISSION_GRANTED ==
-                        context?.let {
+                        mContext?.let {
                             ActivityCompat.checkSelfPermission(
                                 it,
                                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -196,7 +203,7 @@ class SaveReminderFragment : BaseFragment() {
         val backgroundPermissionApproved =
             if (runningQOrLater()) {
                 PackageManager.PERMISSION_GRANTED ==
-                        context?.let {
+                        mContext?.let {
                             ActivityCompat.checkSelfPermission(
                                 it, Manifest.permission.ACCESS_BACKGROUND_LOCATION
                             )
@@ -214,8 +221,8 @@ class SaveReminderFragment : BaseFragment() {
 
     @SuppressLint("MissingPermission")
     private fun addGeofence(id: String) {
-        val geofence = _viewModel.latitude.value?.let {
-            _viewModel.longitude.value?.let { it1 ->
+        val geofence = mViewModel.latitude.value?.let {
+            mViewModel.longitude.value?.let { it1 ->
                 Geofence.Builder()
                     .setRequestId(id)
                     .setCircularRegion(it, it1, Constants.GEOFENCE_RADIUS)
@@ -236,14 +243,14 @@ class SaveReminderFragment : BaseFragment() {
         geofencingClient.addGeofences(geofenceRequest!!, geofencePendingIntent).run {
             addOnSuccessListener {
                 Toast.makeText(
-                    requireContext(),
+                    mContext,
                     requireContext().getString(R.string.geofence_add),
                     Toast.LENGTH_LONG
                 ).show()
             }
             addOnFailureListener {
                 Toast.makeText(
-                    requireContext(),
+                    mContext,
                     getString(R.string.exception_occurred, it.message),
                     Toast.LENGTH_LONG
                 ).show()
@@ -254,7 +261,7 @@ class SaveReminderFragment : BaseFragment() {
     override fun onDestroy() {
         super.onDestroy()
         // Make sure to clear the view model after destroy, as it's a single view model.
-        _viewModel.onClear()
+        mViewModel.onClear()
     }
 
     override fun onRequestPermissionsResult(

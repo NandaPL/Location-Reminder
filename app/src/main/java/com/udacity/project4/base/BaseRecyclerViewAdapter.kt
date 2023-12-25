@@ -23,8 +23,12 @@ abstract class BaseRecyclerViewAdapter<T>(private val callback: ((item: T) -> Un
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataBindingViewHolder<T> {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil
-            .inflate<ViewDataBinding>(layoutInflater, getLayoutRes(viewType), parent, false)
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            layoutInflater,
+            getLayoutRes(viewType),
+            parent,
+            false
+        )
         binding.lifecycleOwner = getLifecycleOwner()
         return DataBindingViewHolder(binding)
     }
@@ -37,7 +41,7 @@ abstract class BaseRecyclerViewAdapter<T>(private val callback: ((item: T) -> Un
         }
     }
 
-    fun getItem(position: Int) = _items[position]
+    private fun getItem(position: Int) = _items[position]
 
     /**
      * Adds data to the actual Dataset
