@@ -36,6 +36,12 @@ buildscript {
         playServicesMapsVersion = '18.1.0'
         firebaseUiAuthVersion = '8.0.2'
         firebaseAuthKtxVersion = '21.2.0'
+        cardVersion = '1.0.0'
+        androidXLegacySupport = '1.0.0'
+        androidXAnnotations = '1.0.1'
+        hamcrestVersion = '1.3'
+        fragmentVersion = '1.5.4'
+
     }
 
     repositories {
