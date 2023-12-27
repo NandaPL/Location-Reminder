@@ -9,18 +9,11 @@
          Also, the FINE_LOCATION permission is required for geofencing functionality to work.
     -->
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <!--
-        The BACKGROUND_LOCATION permission is required for geofencing functionality to work on Q+
-    -->
-
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MyApp"
@@ -32,16 +25,12 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".locationreminders.ReminderDescriptionActivity"
-            android:exported="true"/>
+            android:exported="true">
 
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.raw").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
+        <meta-data
+            android:name="android.app.lib_name"
+            android:value="" />
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -54,6 +43,10 @@
                 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
         </activity>
 
         <activity
@@ -61,7 +54,7 @@
 
         <receiver
             android:name=".locationreminders.geofence.GeofenceBroadcastReceiver"
-            android:enabled="true"
+            android:permission="android.permission.ACCESS_BACKGROUND_LOCATION"
             android:exported="true" />
         <service
             android:name=".locationreminders.geofence.GeofenceTransitionsJobIntentService"

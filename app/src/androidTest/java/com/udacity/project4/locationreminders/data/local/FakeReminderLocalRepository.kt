@@ -5,7 +5,7 @@ import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 
 class FakeReminderLocalRepository: ReminderDataSource {
-    var remainders: MutableList<ReminderDTO> = mutableListOf()
+    var reminders: MutableList<ReminderDTO> = mutableListOf()
 
     private var shouldReturnError = false
 
@@ -17,21 +17,21 @@ class FakeReminderLocalRepository: ReminderDataSource {
         if (shouldReturnError) {
             return Result.Error("Error occurred..")
         } else {
-            remainders.let {
+            reminders.let {
                 return Result.Success(ArrayList(it))
             }
         }
     }
 
     override suspend fun saveReminder(reminder: ReminderDTO) {
-        remainders.add(reminder)
+        reminders.add(reminder)
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
         return if (shouldReturnError) {
             Result.Error("Error occurred..")
         } else {
-            val reminder = remainders.find { it.id == id }
+            val reminder = reminders.find { it.id == id }
             if (reminder != null)
                 Result.Success(reminder)
             else
@@ -40,6 +40,6 @@ class FakeReminderLocalRepository: ReminderDataSource {
     }
 
     override suspend fun deleteAllReminders() {
-        remainders.clear()
+        reminders.clear()
     }
 }
