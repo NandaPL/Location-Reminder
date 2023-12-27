@@ -54,4 +54,7 @@
     <string name="error_getting_location_settings">Error getting location settings resolution: </string>
     <string name="geofence_add">Successfully added geofence!</string>
     <string name="exception_occurred">An exception occurred: %1$s</string>
+
+    <string name="message_permission_granted">Permission for notification already granted.</string>
+    <string name="message_permission_denied">Permissão de notificação não concedida.</string>
 </resources>
