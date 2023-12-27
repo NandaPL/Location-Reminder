@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/reminder_title"
             android:text="@={viewModel.reminderTitle}"
+            android:layout_marginTop="@dimen/margin_top_save_reminder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
