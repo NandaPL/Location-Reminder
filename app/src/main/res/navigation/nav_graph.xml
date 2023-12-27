@@ -49,4 +49,17 @@
         android:name="com.udacity.project4.authentication.AuthenticationActivity"
         android:label="AuthenticationActivity"
         tools:layout="@layout/activity_authentication"/>
+    <fragment
+        android:id="@+id/authenticationFragment"
+        android:name="com.udacity.project4.authentication.AuthenticationFragment"
+        android:label="AuthenticationFragment"
+        tools:layout="@layout/fragment_authentication">
+
+        <action
+            android:id="@+id/action_authenticationFragment_to_reminderListFragment"
+            app:destination="@id/reminderListFragment"
+            app:popUpTo="@id/reminderListFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
 </navigation>

@@ -2,8 +2,6 @@ package com.udacity.project4.base
 
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 
@@ -33,7 +31,7 @@ abstract class BaseFragment : Fragment() {
 
         mViewModel.navigationCommand.observe(this) { command ->
             when (command) {
-                is NavigationCommand.To -> requireView().findNavController().navigate(command.directions)
+                is NavigationCommand.To -> findNavController().navigate(command.directions)
                 is NavigationCommand.Back -> findNavController().popBackStack()
                 is NavigationCommand.BackTo -> findNavController().popBackStack(
                     command.destinationId,

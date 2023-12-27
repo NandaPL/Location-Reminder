@@ -77,6 +77,7 @@ dependencies {
 
     //FirebaseUI for Firebase Auth
     implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     // lottie
     implementation "com.airbnb.android:lottie:3.6.1"
     // Dependencies for local unit tests

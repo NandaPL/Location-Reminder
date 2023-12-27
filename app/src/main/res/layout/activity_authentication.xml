@@ -8,30 +8,14 @@
         android:layout_height="match_parent"
         tools:context=".authentication.AuthenticationActivity">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="224dp"
-            android:text="@string/welcome_to_the_location_reminder_app"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_large"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.492"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/btnAuthenticationLogin"
-            android:layout_width="@dimen/auth_button_width"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:text="@string/login"
-            android:textColor="@color/white"
-            android:textSize="@dimen/auth_button_text_size"
-            app:layout_constraintEnd_toEndOf="@+id/textView"
-            app:layout_constraintStart_toStartOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
-            android:layout_marginTop="@dimen/auth_button_margin_top"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:navGraph="@navigation/nav_graph" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

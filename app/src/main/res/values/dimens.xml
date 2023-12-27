@@ -14,4 +14,6 @@
     <dimen name="auth_button_margin_top">60dp</dimen>
     <dimen name="text_size_ultra_large">26sp</dimen>
     <dimen name="margin_top_save_reminder">16dp</dimen>
+    <dimen name="lottie_dimens">250dp</dimen>
+    <dimen name="lottie_margin_top">100dp</dimen>
 </resources>
