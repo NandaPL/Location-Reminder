@@ -3,7 +3,9 @@ package com.udacity.project4.locationreminders.data.dto
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
+import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.utils.Constants
+import java.util.UUID
 
 /**
  * Immutable model class for a Reminder. In order to compile with Room
@@ -16,7 +18,7 @@ import java.util.*
  * @param id          id of the reminder
  */
 
-@Entity(tableName = "reminders")
+@Entity(tableName = Constants.REMINDERS)
 data class ReminderDTO(
     @ColumnInfo(name = "title") var title: String?,
     @ColumnInfo(name = "description") var description: String?,
@@ -24,4 +26,8 @@ data class ReminderDTO(
     @ColumnInfo(name = "latitude") var latitude: Double?,
     @ColumnInfo(name = "longitude") var longitude: Double?,
     @PrimaryKey @ColumnInfo(name = "entry_id") val id: String = UUID.randomUUID().toString()
-)
+) {
+    fun toReminderDataItem(): ReminderDataItem {
+        return ReminderDataItem(title, description, location, latitude, longitude, id)
+    }
+}
