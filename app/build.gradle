@@ -9,11 +9,12 @@ plugins {
 
 android {
     namespace 'com.udacity.project4'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.udacity.project4"
-        minSdk 21
+        minSdkVersion 24
+        targetSdkVersion 33
         targetSdk rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -62,6 +63,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+
     //Maps & Location
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'

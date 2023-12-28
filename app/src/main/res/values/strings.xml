@@ -50,6 +50,8 @@
     <string name="denied">Denied</string>
     <string name="location_permission_was_not_granted">Location permission was not granted.</string>
     <string name="permission">Permission</string>
+    <string name="permission_required">Permission required</string>
+    <string name="background_permission_rationale">In order for your reminders to work properly, you must enable location access \"all the time\"</string>
     <string name="save_reminder_error_explanation">Select the location and add the title and description before saving.</string>
     <string name="error_getting_location_settings">Error getting location settings resolution: </string>
     <string name="geofence_add">Successfully added geofence!</string>

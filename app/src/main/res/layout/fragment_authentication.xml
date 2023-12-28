@@ -49,10 +49,4 @@
             android:layout_marginTop="@dimen/auth_button_margin_top"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
 </layout>
