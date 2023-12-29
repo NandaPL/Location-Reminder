@@ -7,9 +7,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
-import junit.framework.Assert
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
 import org.junit.After
@@ -24,92 +24,102 @@ import org.junit.runner.RunWith
 @MediumTest
 class RemindersLocalRepositoryTest {
 
-    private lateinit var remainderRepository: RemindersLocalRepository
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
+
+    private lateinit var localDataSource: RemindersLocalRepository
     private lateinit var database: RemindersDatabase
 
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
-
     @Before
-    fun init() {
+    fun setup() {
         database = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
             RemindersDatabase::class.java
-        ).allowMainThreadQueries().build()
+        )
+            .allowMainThreadQueries()
+            .build()
 
-        remainderRepository = RemindersLocalRepository(database.reminderDao())
+        localDataSource =
+            RemindersLocalRepository(
+                database.reminderDao(),
+                Dispatchers.Main
+            )
+    }
+
+    @Test
+    fun insertReminderAndGetById() = runTest {
+        // Given - a reminder is inserted into the db
+        val reminder = ReminderDTO(
+            "Test title", "Test description",
+            "Test location", 123.123, 456.456
+        )
+        localDataSource.saveReminder(reminder)
+        // When - the reminder is loaded by id
+        val loaded = localDataSource.getReminder(reminder.id)
+        // Then - the returned reminder contains the expected values
+        MatcherAssert.assertThat(loaded as Result.Success, CoreMatchers.notNullValue())
+        MatcherAssert.assertThat(loaded.data.id, CoreMatchers.`is`(reminder.id))
+        MatcherAssert.assertThat(loaded.data.title, CoreMatchers.`is`(reminder.title))
+        MatcherAssert.assertThat(loaded.data.description, CoreMatchers.`is`(reminder.description))
+        MatcherAssert.assertThat(loaded.data.location, CoreMatchers.`is`(reminder.location))
+        MatcherAssert.assertThat(loaded.data.latitude, CoreMatchers.`is`(reminder.latitude))
+        MatcherAssert.assertThat(loaded.data.longitude, CoreMatchers.`is`(reminder.longitude))
+    }
+
+    @Test
+    fun getReminderById_idDoesNotExist() = runTest {
+        // Given - no reminder with id = 1 exists in the db
+        // When - the getReminder method is called with the non-existent id
+        val loaded = localDataSource.getReminder("1")
+        // Then - an error is returned
+        MatcherAssert.assertThat(loaded as Result.Error, CoreMatchers.notNullValue())
+        MatcherAssert.assertThat(loaded.message, CoreMatchers.`is`("Reminder not found!"))
+    }
+
+    @Test
+    fun saveRemindersAndGetAll() = runTest {
+        // Given - Reminders exist in the db
+        val reminderOne = ReminderDTO("Test title", "Test description",
+            "Test location", 123.123, 456.456)
+        val reminderTwo = ReminderDTO("Test title 2", "Test description 2",
+            "Test location 2", 124.124, 457.457)
+        val reminderThree = ReminderDTO("Test title 3", "Test description 3",
+            "Test location 3", 125.125, 458.458)
+        localDataSource.saveReminder(reminderOne)
+        localDataSource.saveReminder(reminderTwo)
+        localDataSource.saveReminder(reminderThree)
+        // When - getReminders is called
+        val retrievedList = localDataSource.getReminders()
+        // Then - all existing reminders are returned
+        MatcherAssert.assertThat(retrievedList as Result.Success, CoreMatchers.notNullValue())
+        MatcherAssert.assertThat(retrievedList.data.size, CoreMatchers.`is`(3))
+        MatcherAssert.assertThat(retrievedList.data.contains(reminderOne), CoreMatchers.`is`(true))
+        MatcherAssert.assertThat(retrievedList.data.contains(reminderTwo), CoreMatchers.`is`(true))
+        MatcherAssert.assertThat(retrievedList.data.contains(reminderThree), CoreMatchers.`is`(true))
+    }
+
+    @Test
+    fun deleteAllReminders() = runTest {
+        // Given - Reminders exist in the db
+        val reminderOne = ReminderDTO("Test title", "Test description",
+            "Test location", 123.123, 456.456)
+        val reminderTwo = ReminderDTO("Test title 2", "Test description 2",
+            "Test location 2", 124.124, 457.457)
+        val reminderThree = ReminderDTO("Test title 3", "Test description 3",
+            "Test location 3", 125.125, 458.458)
+        localDataSource.saveReminder(reminderOne)
+        localDataSource.saveReminder(reminderTwo)
+        localDataSource.saveReminder(reminderThree)
+        // When - the deleteAllReminders method is called
+        localDataSource.deleteAllReminders()
+        // Then - all reminders are removed from the db
+        val loaded = localDataSource.getReminders()
+        MatcherAssert.assertThat((loaded as Result.Success).data.size, CoreMatchers.`is`(0))
     }
 
     @After
-    fun closeDb() = database.close()
-
-    @Test
-    fun saveRemainderFunctionSuccess() = runBlocking {
-        val reminder = ReminderDTO(
-            "Test1", "test1", "test1", 0.0, 0.0, "test1"
-        )
-        remainderRepository.saveReminder(
-            reminder
-        )
-        val result = remainderRepository.getReminder(reminder.id)
-        MatcherAssert.assertThat(result is Result.Success, CoreMatchers.`is`(true))
-        result as Result.Success
-        MatcherAssert.assertThat(result.data.id, CoreMatchers.`is`(reminder.id))
-        MatcherAssert.assertThat(result.data.title, CoreMatchers.`is`(CoreMatchers.notNullValue()))
-        MatcherAssert.assertThat(result.data.description, CoreMatchers.`is`(CoreMatchers.notNullValue()))
-        MatcherAssert.assertThat(result.data.latitude, CoreMatchers.`is`(CoreMatchers.notNullValue()))
-        MatcherAssert.assertThat(result.data.longitude, CoreMatchers.`is`(CoreMatchers.notNullValue()))
-    }
-
-
-    @Test
-    fun getRemainders_isReminderListEmpty_false() = runBlocking {
-        remainderRepository.saveReminder(
-            ReminderDTO(
-                "Test1", "test1", "test1", 0.0, 0.0, "test1"
-            )
-        )
-        remainderRepository.getReminders()
-        val list = remainderRepository.getReminders() as Result.Success<List<ReminderDTO>>
-        MatcherAssert.assertThat(list.data.isNotEmpty(), CoreMatchers.`is`(true))
-    }
-
-    @Test
-    fun getReminder_isReminderListEmpty_false() = runBlocking {
-        remainderRepository.saveReminder(
-            ReminderDTO(
-                "Test1", "test1", "test1", 0.0, 0.0, "test1"
-            )
-        )
-        val list = remainderRepository.getReminder("test1")
-        MatcherAssert.assertThat(list, CoreMatchers.`is`(CoreMatchers.notNullValue()))
-    }
-
-    @Test
-    fun deleteReminders_isReminderListEmpty_false() = runBlocking {
-        remainderRepository.saveReminder(
-            ReminderDTO(
-                "Test1", "test1", "test1", 0.0, 0.0, "test1"
-            )
-        )
-        val list = remainderRepository.getReminders() as Result.Success<List<ReminderDTO>>
-        MatcherAssert.assertThat(list.data.isNotEmpty(), CoreMatchers.`is`(true))
-        remainderRepository.deleteAllReminders()
-        val savedList = remainderRepository.getReminders() as Result.Success<List<ReminderDTO>>
-        MatcherAssert.assertThat(savedList.data.isEmpty(), CoreMatchers.`is`(true))
-    }
-
-    @Test
-    fun reminderNotFound_isReminderStatusCodeNull_true() = runBlocking {
-        remainderRepository.saveReminder(
-            ReminderDTO(
-                "Test1", "test1", "test1", 0.0, 0.0, "test1"
-            )
-        )
-        val reminder = remainderRepository.getReminder("unknown id") as Result.Error
-        Assert.assertNotNull(reminder)
-        Assert.assertEquals("Reminder not found!", reminder.message)
-        Assert.assertNull(reminder.statusCode)
+    fun cleanUp() {
+        database.close()
     }
 
 }

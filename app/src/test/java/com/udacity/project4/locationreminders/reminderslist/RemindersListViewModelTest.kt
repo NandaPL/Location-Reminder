@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,9 +20,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
+@Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class RemindersListViewModelTest {
 
     private lateinit var viewModel: RemindersListViewModel
@@ -39,6 +42,7 @@ class RemindersListViewModelTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
     @get:Rule
     var mainCoroutineRule = CoroutineRule()
 
@@ -66,7 +70,7 @@ class RemindersListViewModelTest {
     @Test
     fun loadReminders_returnError() {
         //GIVEN
-        reminderListRepo.setReturnError(true)
+        reminderListRepo.returnError = true
         //WHEN
         viewModel.loadReminders()
         //THEN

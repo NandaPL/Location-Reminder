@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,8 +29,10 @@ import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.locationreminders.savereminder.SelectedLocation
 import com.udacity.project4.utils.Constants
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
+import com.udacity.project4.utils.wrapEspressoIdlingResource
 import org.koin.android.ext.android.inject
 import java.util.Locale
 
@@ -40,6 +44,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var binding: FragmentSelectLocationBinding
 
     private lateinit var map: GoogleMap
+    private val zoomLevel = 15f
+    private lateinit var myLocation: FusedLocationProviderClient
+
+    private var selectedLocation: SelectedLocation? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -50,17 +58,84 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         binding.viewModel = mViewModel
         binding.lifecycleOwner = this
 
-        val mapFragment = childFragmentManager
-            .findFragmentById(R.id.mapFragment) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-
-        setHasOptionsMenu(true)
-        setDisplayHomeAsUpEnabled(true)
+        myLocation = LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.btnSaveReminderLocation.setOnClickListener {
             onLocationSelected()
         }
+
+        setHasOptionsMenu(true)
+        setDisplayHomeAsUpEnabled(true)
+
+        val mapFragment = childFragmentManager
+            .findFragmentById(R.id.mapFragment) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
         return binding.root
+    }
+
+    @SuppressLint("NewApi")
+    val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        )
+        { isGranted ->
+            if (isGranted) {
+                enableLocation()
+            } else {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    val builder = AlertDialog.Builder(requireContext())
+                    builder.setTitle(getString(R.string.permission_required))
+                        .setMessage(R.string.permission_denied_explanation)
+                        .setPositiveButton(
+                            getString(R.string.message_permission_granted)
+                        ) { dialog, _ ->
+                            enableLocation()
+                            dialog.dismiss()
+                        }
+                        .setNegativeButton(
+                            R.string.denied
+                        ) { dialog, _ ->
+                            raisePermissionDeniedSnackBar(getString(R.string.permission_denied_explanation))
+                            dialog.dismiss()
+                        }
+                        .show()
+
+                } else {
+                    raisePermissionDeniedSnackBar(getString(R.string.permission_denied_explanation))
+                }
+            }
+
+        }
+
+    @SuppressLint("MissingPermission")
+    private fun enableLocation() {
+        if (permissionCheck(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            wrapEspressoIdlingResource {
+                map.isMyLocationEnabled = true
+                var currentLocation: LatLng?
+                myLocation.lastLocation.addOnSuccessListener { location ->
+                    location?.let {
+                        currentLocation = LatLng(location.latitude, location.longitude)
+                        map.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                currentLocation!!,
+                                zoomLevel
+                            )
+                        )
+                        selectedLocation = SelectedLocation(
+                            getString(R.string.dropped_pin),
+                            currentLocation!!
+                        )
+                    }
+                }
+            }
+            Toast.makeText(requireActivity(), R.string.select_poi, Toast.LENGTH_LONG).show()
+        } else {
+            requestPermissionLauncher.launch(
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
     }
 
     private fun onLocationSelected() {
@@ -179,7 +254,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setMapStyle(map)
         setLongClickMap(map)
         setPoiClickSelected(map)
-        enableMyLocation()
+        enableLocation()
     }
 
     override fun onRequestPermissionsResult(
@@ -191,6 +266,17 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     enableMyLocation()
                 }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        snackBarWasTapped?.let {
+            if (permissionCheck(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                enableLocation()
+            } else {
+                raisePermissionDeniedSnackBar(getString(R.string.permission_denied_explanation))
             }
         }
     }

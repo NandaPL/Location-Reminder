@@ -21,7 +21,6 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     val selectedPOI = MutableLiveData<PointOfInterest?>()
     val latitude = MutableLiveData<Double?>()
     val longitude = MutableLiveData<Double?>()
-
     /**
      * Clear the live data objects to start fresh next time the view model gets called
      */
@@ -33,14 +32,12 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         latitude.value = null
         longitude.value = null
     }
-
     fun setLocationSelectedInfo(selectedLocation: LatLng, selectedLocationDescription: String?){
         latitude.value = selectedLocation.latitude
         longitude.value = selectedLocation.longitude
         reminderSelectedLocationStr.value = selectedLocationDescription
         navigationCommand.value = NavigationCommand.Back
     }
-
     /**
      * Save the reminder to the data source
      */
@@ -62,7 +59,6 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
             navigationCommand.value = NavigationCommand.Back
         }
     }
-
     /**
      * Validate the entered data and show error to the user if there's any invalid data
      */
@@ -71,11 +67,16 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
             showSnackBarInt.value = R.string.err_enter_title
             return false
         }
-
         if (reminderData.location.isNullOrEmpty()) {
             showSnackBarInt.value = R.string.err_select_location
             return false
         }
         return true
+    }
+}
+
+data class SelectedLocation(val name: String, val latlng: LatLng){
+    override fun toString(): String {
+        return "$name ${latlng.latitude}, ${latlng.longitude}"
     }
 }
