@@ -94,7 +94,7 @@ class RemindersDaoTest {
     }
 
     @Test
-    fun updateExistingReminder() = runTest {
+    fun updateExistingReminders() = runTest {
         // Given - a reminder is saved in the db
         val reminder = ReminderDTO("Test title", "Test description",
             "Test location", 123.123, 456.456)

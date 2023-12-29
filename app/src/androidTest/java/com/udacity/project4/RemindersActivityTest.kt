@@ -3,7 +3,6 @@ package com.udacity.project4
 import android.Manifest
 import android.app.Application
 import android.os.Build
-import android.widget.Toast
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso
@@ -102,7 +101,7 @@ class RemindersActivityTest :
                     get() as ReminderDataSource
                 )
             }
-            single { RemindersLocalRepository(get()) as ReminderDataSource }
+            single { RemindersLocalRepository(get()) }
             single { LocalDB.createRemindersDao(appContext) }
         }
         //declare a new koin module
@@ -135,9 +134,7 @@ class RemindersActivityTest :
      */
     @Test
     fun createAndSaveNewTask() {
-        assumeTrue(
-            Build.VERSION.SDK_INT <= 29
-        )
+        assumeTrue(Build.VERSION.SDK_INT <= 29)
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 

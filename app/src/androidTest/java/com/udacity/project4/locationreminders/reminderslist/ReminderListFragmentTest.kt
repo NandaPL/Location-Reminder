@@ -1,23 +1,23 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.test.core.app.ApplicationProvider
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import atPosition
-import org.koin.test.get
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
-import com.udacity.project4.locationreminders.data.local.FakeReminderLocalRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -29,31 +29,36 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
+import org.koin.test.get
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
-import org.koin.test.get
+import org.robolectric.annotation.Config
+import atPosition
+import com.udacity.project4.locationreminders.data.local.FakeReminderDataSource
+import org.koin.test.junit5.AutoCloseKoinTest
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 //UI Testing
 @MediumTest
-class ReminderListFragmentTest {
+@Config(sdk = [Build.VERSION_CODES.TIRAMISU])
+class ReminderListFragmentTest: AutoCloseKoinTest() {
 
-    private lateinit var fakeRepository: FakeReminderLocalRepository
+    private lateinit var fakeRepository: FakeReminderDataSource
     private lateinit var appContext: Application
 
     @Before
     fun init() {
         stopKoin()
-        appContext = ApplicationProvider.getApplicationContext()
+        appContext = getApplicationContext()
         val myModule = module {
             viewModel {
                 RemindersListViewModel(
                     appContext,
-                    get() as FakeReminderLocalRepository
+                    get() as FakeReminderDataSource
                 )
             }
-            single { FakeReminderLocalRepository() }
+            single { FakeReminderDataSource() }
         }
         //declare a new koin module
         startKoin {
@@ -83,58 +88,55 @@ class ReminderListFragmentTest {
         launchFragmentInContainer<ReminderListFragment>(themeResId =  R.style.AppTheme)
         // Then - reminders are displayed on the screen
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(0, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test title")
+            matches(atPosition(0, hasDescendant(
+            withText("Test title")
             )
             ))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(0, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test description")
+            matches(atPosition(0, hasDescendant(
+            withText("Test description")
             )
             ))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(0, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test location")
+            matches(atPosition(0, hasDescendant(
+            withText("Test location")
             )
             ))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(1, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test title 2")
+            matches(atPosition(1, hasDescendant(
+            withText("Test title 2")
             )
             ))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(1, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test description 2")
+            matches(atPosition(1, hasDescendant(
+            withText("Test description 2")
             )
             ))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(1, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test location 2")
+            matches(atPosition(1, hasDescendant(
+            withText("Test location 2")
             )
             ))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(2, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test title 3")
-            )
-            ))
+            matches(atPosition(2, hasDescendant(
+                withText("Test title 3")
+            )))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(2, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test description 3")
-            )
-            ))
+            matches(atPosition(2, hasDescendant(
+                withText("Test description 3")
+            )))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            ViewAssertions.matches(atPosition(2, ViewMatchers.hasDescendant(
-            ViewMatchers.withText("Test location 3")
-            )
-            ))
+            matches(atPosition(2, hasDescendant(
+                withText("Test location 3")
+            )))
         )
     }
 
@@ -144,7 +146,7 @@ class ReminderListFragmentTest {
         // When - Reminders fragment is launched
         launchFragmentInContainer<ReminderListFragment>(themeResId =  R.style.AppTheme)
         // Then - the no data text view is displayed
-        onView(withId(R.id.noDataTextView)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
     }
 
     @Test
@@ -165,11 +167,11 @@ class ReminderListFragmentTest {
     @Test
     fun repositoryReturnsError_snackbarIsDisplayed(){
         // Given - the repository returns an error
-        fakeRepository.shouldReturnError = true
+        fakeRepository.returnError = true
         // When - the Reminders fragment is launched
         launchFragmentInContainer<ReminderListFragment>(themeResId =  R.style.AppTheme)
         // A snackbar is displayed
         onView(withId(com.google.android.material.R.id.snackbar_text))
-            .check(ViewAssertions.matches(ViewMatchers.withText("Test exception")))
+            .check(matches(withText("Test exception")))
     }
 }
