@@ -61,6 +61,7 @@
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/tvReminderDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -70,5 +71,6 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_margin="@dimen/margin_normal"
             tools:text="@string/lorem_ipsum_text"/>
+
     </LinearLayout>
 </layout>

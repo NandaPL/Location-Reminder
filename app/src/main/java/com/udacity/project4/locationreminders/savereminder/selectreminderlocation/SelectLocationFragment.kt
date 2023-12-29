@@ -68,7 +68,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setDisplayHomeAsUpEnabled(true)
 
         val mapFragment = childFragmentManager
-            .findFragmentById(R.id.mapFragment) as SupportMapFragment
+            .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         return binding.root

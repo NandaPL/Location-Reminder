@@ -59,7 +59,7 @@ class RemindersActivityTest :
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
     private val dataBindingIdlingResource = DataBindingIdlingResource()
-    val saveReminderViewModel: SaveReminderViewModel by inject()
+    private val saveReminderViewModel: SaveReminderViewModel by inject()
 
     // Thanks to Stack Overflow user CommonsWare for this helpful solution (https://stackoverflow.com/a/75330411/5264775)
     @Rule
@@ -101,7 +101,7 @@ class RemindersActivityTest :
                     get() as ReminderDataSource
                 )
             }
-            single { RemindersLocalRepository(get()) }
+            single { RemindersLocalRepository(get()) as ReminderDataSource }
             single { LocalDB.createRemindersDao(appContext) }
         }
         //declare a new koin module
@@ -134,7 +134,9 @@ class RemindersActivityTest :
      */
     @Test
     fun createAndSaveNewTask() {
-        assumeTrue(Build.VERSION.SDK_INT <= 29)
+        assumeTrue(
+            Build.VERSION.SDK_INT <= 29
+        )
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
@@ -142,15 +144,15 @@ class RemindersActivityTest :
         onView(withId(R.id.addReminderFAB)).perform(click())
         onView(withId(R.id.saveReminderLayout)).check(matches(isDisplayed()))
         onView(withId(R.id.tvSelectLocation)).perform(click())
-        onView(withId(R.id.mapFragment)).check(matches(isDisplayed()))
+        onView(withId(R.id.map)).check(matches(isDisplayed()))
         Espresso.closeSoftKeyboard()
         onView(withText(R.string.select_poi))
             .inRoot(withDecorView(not(`is`(getActivity(appContext)?.window?.decorView))))
             .check(matches(isDisplayed()))
         Thread.sleep(3500)
-        onView(withId(R.id.saveReminderFragment)).perform(click())
+        onView(withId(R.id.btnSaveReminderLocation)).perform(click())
         assertNotNull(saveReminderViewModel.selectedPOI.value)
-        onView(withId(R.id.tvSelectLocation)).check(matches(withText(saveReminderViewModel.selectedPOI.value.toString())))
+        onView(withId(R.id.tvSelectedLocation)).check(matches(withText(saveReminderViewModel.selectedPOI.value.toString())))
         onView(withId(R.id.etReminderTitle)).perform(typeText("Test title"))
         onView(withId(R.id.etReminderDescription)).perform(typeText("Test description"))
         Espresso.closeSoftKeyboard()
