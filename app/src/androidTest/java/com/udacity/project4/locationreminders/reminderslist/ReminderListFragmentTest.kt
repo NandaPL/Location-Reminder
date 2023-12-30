@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.reminderslist
 import android.app.Application
 import android.os.Build
 import android.os.Bundle
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -35,13 +36,13 @@ import org.mockito.Mockito.verify
 import org.robolectric.annotation.Config
 import atPosition
 import com.udacity.project4.locationreminders.data.local.FakeReminderDataSource
+import org.junit.Rule
 import org.koin.test.junit5.AutoCloseKoinTest
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 //UI Testing
 @MediumTest
-@Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class ReminderListFragmentTest: AutoCloseKoinTest() {
 
     private lateinit var fakeRepository: FakeReminderDataSource
@@ -71,6 +72,10 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
             fakeRepository.deleteAllReminders()
         }
     }
+
+    // Execute each task concurrently using architecture components.
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
 
     @Test
     fun remindersInRepository_displayedInList() = runTest {
