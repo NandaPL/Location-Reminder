@@ -188,7 +188,7 @@ class RemindersActivityTest :
 
         // click  to navgation to select Location screen and add location
         onView(withId(R.id.tvSelectLocation)).perform(click())
-        onView(withId(R.id.map)).perform(longClick())
+        onView(withId(R.id.mapFragment)).perform(longClick())
         onView(withId(R.id.btnSaveReminderLocation)).perform(click())
         onView(withId(R.id.btnSaveReminder)).perform(click())
         //check the data is displayed

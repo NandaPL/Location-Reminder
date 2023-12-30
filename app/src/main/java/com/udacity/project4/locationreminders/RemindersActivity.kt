@@ -29,17 +29,8 @@ class RemindersActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.home -> {
-                val navHostFragment = supportFragmentManager
-                    .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-                navHostFragment.navController.popBackStack()
-                return true
-            }
-            R.id.logout -> {
-                FirebaseAuth.getInstance().signOut()
-                intent = Intent(this, AuthenticationActivity::class.java)
-                startActivity(intent)
-                finish()
+            android.R.id.home -> {
+                (dataBinding.navHostFragment as NavHostFragment).navController.popBackStack()
                 return true
             }
         }

@@ -324,12 +324,4 @@ class SaveReminderFragment : BaseFragment() {
         // Make sure to clear the view model after destroy, as it's a single view model.
         mViewModel.onClear()
     }
-
-    private fun showToast(message: String) {
-        Toast.makeText(
-            context,
-            message,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
 }
