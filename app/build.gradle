@@ -35,6 +35,11 @@ android {
         returnDefaultValues = true
     }
 
+    packagingOptions {
+        exclude 'META-INF/LICENSE-notice.md'
+        exclude 'META-INF/LICENSE.md'
+    }
+
     buildFeatures {
         dataBinding true
     }

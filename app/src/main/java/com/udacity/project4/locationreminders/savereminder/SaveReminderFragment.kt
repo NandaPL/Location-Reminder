@@ -36,6 +36,7 @@ import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.Constants
 import com.udacity.project4.utils.Constants.ACTION_GEOFENCE_EVENT
+import com.udacity.project4.utils.Constants.GEOFENCE_RADIUS
 import com.udacity.project4.utils.isDeviceLocationEnabled
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.wrapEspressoIdlingResource
@@ -225,7 +226,7 @@ class SaveReminderFragment : BaseFragment() {
                 .setCircularRegion(
                     reminderDataItem.latitude!!,
                     reminderDataItem.longitude!!,
-                    Constants.GEOFENCE_RADIUS
+                    GEOFENCE_RADIUS
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
@@ -252,24 +253,24 @@ class SaveReminderFragment : BaseFragment() {
 
     private fun foregroundAndBackgroundLocationPermissionApproved(): Boolean {
         val foregroundLocationApproved = (mContext.let {
-            ActivityCompat.checkSelfPermission(it,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        } == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                    ActivityCompat.checkSelfPermission(it,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                } == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED)
 
         val backgroundPermissionApproved = if (runningQOrLater()) {
-            PackageManager.PERMISSION_GRANTED ==
-                    mContext.let {
-                        ActivityCompat.checkSelfPermission(
-                            it, Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                        )
-                    }
-        } else {
-            true
-        }
+                PackageManager.PERMISSION_GRANTED ==
+                        mContext.let {
+                            ActivityCompat.checkSelfPermission(
+                                it, Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                            )
+                        }
+            } else {
+                true
+            }
         return foregroundLocationApproved && backgroundPermissionApproved
     }
 

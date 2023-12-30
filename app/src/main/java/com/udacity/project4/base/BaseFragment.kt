@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.udacity.project4.R
 import com.udacity.project4.BuildConfig
+import com.udacity.project4.R
 
 /**
  * Base Fragment to observe on the common LiveData objects
