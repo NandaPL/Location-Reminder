@@ -29,6 +29,8 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         reminderDescription.value = null
         reminderSelectedLocationStr.value = null
         selectedPOI.value = null
+        latitude.value = null
+        longitude.value = null
     }
     fun setLocationSelectedInfo(selectedLocation: LatLng, selectedLocationDescription: String?){
         latitude.value = selectedLocation.latitude
