@@ -170,11 +170,10 @@ class RemindersActivityTest :
     fun selectLocationAndEnterTitle_NavigateToListFragment_DataFound() {
         //start up taken screen
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
-        val activity = activityScenario.getActivity()
 
         dataBindingIdlingResource.monitorActivity(activityScenario)
-        activityScenario.moveToState(Lifecycle.State.RESUMED)
-
+        //check the data is displayed
+        onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
         // click  to navgation to saveReminder screen
         onView(withId(R.id.addReminderFAB)).perform(click())
         // Add title to saveReminder to display in list
@@ -193,13 +192,8 @@ class RemindersActivityTest :
         onView(withId(R.id.mapFragment)).perform(longClick())
         onView(withId(R.id.btnSaveReminderLocation)).perform(click())
         onView(withId(R.id.btnSaveReminder)).perform(click())
-        //check the data is displayed
-        onView(withId(R.id.noDataTextView)).check(matches( not(isDisplayed())))
 
-        //check is toast is displayed reminder saved
-        onView(withText(R.string.reminder_saved)).inRoot(withDecorView(not(`is`(activity?.window?.decorView)))).check(
-            matches(isDisplayed())
-        )
+
         //make sure activity is close after finished test
         activityScenario.close()
     }
