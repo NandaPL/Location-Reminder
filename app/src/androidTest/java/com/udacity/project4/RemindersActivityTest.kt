@@ -6,6 +6,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.withDecorView
@@ -44,7 +45,7 @@ class RemindersActivityTest :
 
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
-    private val dataBindingIdlingResource = DataBindingIdlingResource()
+    private var dataBindingIdlingResource = DataBindingIdlingResource()
 
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
@@ -176,12 +177,12 @@ class RemindersActivityTest :
         onView(withId(R.id.addReminderFAB)).perform(click())
         // Add title to saveReminder to display in list
         onView(withId(R.id.etReminderTitle)).perform(
-            typeText("newReminder"),
+            ViewActions.typeText("newReminder"),
             closeSoftKeyboard()
         )
         // Add description to saveReminder to display in list
         onView(withId(R.id.etReminderDescription)).perform(
-            typeText("new"),
+            ViewActions.typeText("new"),
             closeSoftKeyboard()
         )
 
@@ -199,7 +200,6 @@ class RemindersActivityTest :
         )
         //make sure activity is close after finished test
         activity.close()
-
     }
 
 
