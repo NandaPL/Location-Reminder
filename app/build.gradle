@@ -13,7 +13,8 @@ android {
 
     defaultConfig {
         applicationId "com.udacity.project4"
-        minSdkVersion rootProject.minSdkVersion
+        minSdkVersion 24
+        targetSdkVersion 33
         targetSdk rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
