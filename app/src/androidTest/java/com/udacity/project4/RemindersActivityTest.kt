@@ -1,18 +1,18 @@
 package com.udacity.project4
 
-import android.app.Activity
 import android.app.Application
-import androidx.test.core.app.ActivityScenario
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.core.app.ActivityScenario
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
@@ -101,7 +101,7 @@ class RemindersActivityTest :
      */
     //This function use to test reminderListData
     @Test
-    fun reminderList_DataNotFound(){
+    fun reminderList_DataNotFound() {
         //start up taken screen
         val activity = ActivityScenario.launch(RemindersActivity::class.java)
         // add screen in binding
@@ -115,7 +115,7 @@ class RemindersActivityTest :
 
     //this function use to now buttonSnackBar
     @Test
-    fun saveReminder_showSnackBar_noTitleFound() = runBlocking{
+    fun saveReminder_showSnackBar_noTitleFound() = runBlocking {
         //start up taken screen
         val activity = ActivityScenario.launch(RemindersActivity::class.java)
         // add screen in binding
@@ -135,7 +135,7 @@ class RemindersActivityTest :
     }
 
     @Test
-    fun saveReminder_showSnackBar_nolocationFound() = runBlocking{
+    fun saveReminder_showSnackBar_nolocationFound() = runBlocking {
 
         //start up taken screen
         val activity = ActivityScenario.launch(RemindersActivity::class.java)
@@ -167,22 +167,24 @@ class RemindersActivityTest :
 
 
     @Test
-    fun selectLocationAndEnterTitle_NavigateToListFragment_DataFound(){
+    fun selectLocationAndEnterTitle_NavigateToListFragment_DataFound() {
         //start up taken screen
-        val activity = ActivityScenario.launch(RemindersActivity::class.java)
-        dataBindingIdlingResource.monitorActivity(activity)
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        val activity = activityScenario.getActivity()
 
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+        activityScenario.moveToState(Lifecycle.State.RESUMED)
 
         // click  to navgation to saveReminder screen
         onView(withId(R.id.addReminderFAB)).perform(click())
         // Add title to saveReminder to display in list
         onView(withId(R.id.etReminderTitle)).perform(
-            ViewActions.typeText("newReminder"),
+            typeText("newReminder"),
             closeSoftKeyboard()
         )
         // Add description to saveReminder to display in list
         onView(withId(R.id.etReminderDescription)).perform(
-            ViewActions.typeText("new"),
+            typeText("new"),
             closeSoftKeyboard()
         )
 
@@ -195,19 +197,10 @@ class RemindersActivityTest :
         onView(withId(R.id.noDataTextView)).check(matches( not(isDisplayed())))
 
         //check is toast is displayed reminder saved
-        onView(withText(R.string.reminder_saved)).inRoot(withDecorView(not(`is`(activityRule(activity).window.decorView)))).check(
+        onView(withText(R.string.reminder_saved)).inRoot(withDecorView(not(`is`(activity?.window?.decorView)))).check(
             matches(isDisplayed())
         )
         //make sure activity is close after finished test
-        activity.close()
-    }
-
-
-    private fun activityRule(activityScenario: ActivityScenario<RemindersActivity>): Activity {
-        lateinit var activity: Activity
-        activityScenario.onActivity {
-            activity = it
-        }
-        return activity
+        activityScenario.close()
     }
 }
