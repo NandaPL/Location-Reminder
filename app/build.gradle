@@ -126,4 +126,5 @@ dependencies {
     androidTestImplementation "io.insert-koin:koin-test-junit5:3.2.2"
 
     androidTestImplementation('io.insert-koin:koin-test:3.5.0') { exclude group: 'org.mockito' }
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1'
 }

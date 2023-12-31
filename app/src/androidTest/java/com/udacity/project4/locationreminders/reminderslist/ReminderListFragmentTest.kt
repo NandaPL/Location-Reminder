@@ -93,55 +93,33 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
         launchFragmentInContainer<ReminderListFragment>(themeResId =  R.style.AppTheme)
         // Then - reminders are displayed on the screen
         onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(0, hasDescendant(
-            withText("Test title")
-            )
-            ))
+            matches(atPosition(0, hasDescendant(withText("Test title 1"))))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(0, hasDescendant(
-            withText("Test description")
-            )
-            ))
+            matches(atPosition(0, hasDescendant(withText("Test description 1"))))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(0, hasDescendant(
-            withText("Test location")
-            )
-            ))
+            matches(atPosition(0, hasDescendant(withText("Test location 1"))))
+        )
+
+        onView(withId(R.id.reminderssRecyclerView)).check(
+            matches(atPosition(1, hasDescendant(withText("Test title 2"))))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(1, hasDescendant(
-            withText("Test title 2")
-            )
-            ))
+            matches(atPosition(1, hasDescendant(withText("Test description 2"))))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(1, hasDescendant(
-            withText("Test description 2")
-            )
-            ))
+            matches(atPosition(1, hasDescendant(withText("Test location 2"))))
+        )
+
+        onView(withId(R.id.reminderssRecyclerView)).check(
+            matches(atPosition(2, hasDescendant(withText("Test title 3"))))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(1, hasDescendant(
-            withText("Test location 2")
-            )
-            ))
+            matches(atPosition(2, hasDescendant(withText("Test description 3"))))
         )
         onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(2, hasDescendant(
-                withText("Test title 3")
-            )))
-        )
-        onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(2, hasDescendant(
-                withText("Test description 3")
-            )))
-        )
-        onView(withId(R.id.reminderssRecyclerView)).check(
-            matches(atPosition(2, hasDescendant(
-                withText("Test location 3")
-            )))
+            matches(atPosition(2, hasDescendant(withText("Test location 3"))))
         )
     }
 
@@ -149,7 +127,7 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
     fun noReminders_displaysNoDataView(){
         // Given - no reminders in the repository
         // When - Reminders fragment is launched
-        launchFragmentInContainer<ReminderListFragment>(themeResId =  R.style.AppTheme)
+        launchFragmentInContainer<ReminderListFragment>(themeResId = R.style.AppTheme)
         // Then - the no data text view is displayed
         onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
     }
@@ -174,9 +152,9 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
         // Given - the repository returns an error
         fakeRepository.returnError = true
         // When - the Reminders fragment is launched
-        launchFragmentInContainer<ReminderListFragment>(themeResId =  R.style.AppTheme)
+        launchFragmentInContainer<ReminderListFragment>(themeResId = R.style.AppTheme)
         // A snackbar is displayed
         onView(withId(com.google.android.material.R.id.snackbar_text))
-            .check(matches(withText("Test exception")))
+            .check(matches(withText("Error occurred..")))
     }
 }
